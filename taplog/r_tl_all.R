@@ -4,7 +4,7 @@ library(lubridate)
 library(stringr)
 
 # config ------------------------------------------------------------------
-data <- "~/OneDrive/Magnum Opus/datague/data"
+data <- "~/OneDrive/Magnum Opus/datague/data" # Raw TapLog data location
 
 
 # get data ----------------------------------------------------------------
@@ -80,7 +80,43 @@ if (nrow(df_trans) >= 1) {
   # max trip_id
   data.frame(load_ts = load_ts_c,
              load_dt = load_dt_c,
-             trip_id = max(df_trans$trip_id)) %>%
+             trip_id = max(df_trans$trip_id),
+             type = "Transjakarta") %>%
+    pq_write("log_tripid", append = TRUE, overwrite = FALSE)
+}
+
+
+
+# insert krl --------------------------------------------------------------
+# transform data
+source("d_tl_transport_krl.R")
+
+# execute
+if (nrow(df_krl_trip) >= 1) {
+  df_krl_trip %>%
+    mutate(load_ts = load_ts_c,
+           load_dt = load_dt_c) %>%
+    pq_write("transport_krl_trip", append = TRUE, overwrite = FALSE)
+  
+  df_krl_raw %>%
+    mutate(load_ts = load_ts_c,
+           load_dt = load_dt_c) %>%
+    pq_write("raw_krl", append = TRUE, overwrite = FALSE)
+  
+  # log history
+  data.frame(load_ts = load_ts_c,
+             load_dt = load_dt_c,
+             table = "transport_krl",
+             job = "insert",
+             nrow = nrow(df),
+             latest_dt = max(df$dt)) %>%
+    pq_write("log_history", append = TRUE, overwrite = FALSE)
+  
+  # max trip_id
+  data.frame(load_ts = load_ts_c,
+             load_dt = load_dt_c,
+             trip_id = max(df_krl_trip$trip_id),
+             type = "KRL") %>%
     pq_write("log_tripid", append = TRUE, overwrite = FALSE)
 }
 

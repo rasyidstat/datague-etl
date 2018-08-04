@@ -5,6 +5,13 @@ library(lubridate)
 library(tidyverse)
 library(mrsq)
 
+# config ------------------------------------------------------------------
+gs <- "~/OneDrive/Magnum Opus/datague/cred/pa_gs"     # Google Sheets credential location
+output <- "~/OneDrive/Magnum Opus/datague/data/gojek" # Output folder for data backup
+sheet_name <- "GO-JEK Receipt"                        # Name of sheets from the IFTTT
+# Note: you can try your own data by modifying the config above
+# Create your own IFTTT at https://ifttt.com/applets/282294p-gmail-to-sheets
+
 # get data ----------------------------------------------------------------
 source("d_ifttt_trans_gojek.R")
 

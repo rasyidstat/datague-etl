@@ -1,9 +1,9 @@
 # read data from google sheet
-gs_auth("~/OneDrive/Magnum Opus/datague/cred/pa_gs")
+gs_auth(gs)
 sheets <- gs_ls()
 df <- sheets %>%
   arrange(updated) %>%
-  filter(grepl("GO-JEK Receipt", sheet_title)) %>%
+  filter(grepl(sheet_name, sheet_title)) %>%
   select(sheet_title) %>%
   mutate(df = map(sheet_title, gs_title),
          df = map(df, function(x) gs_read(x, col_names=FALSE)),
@@ -94,7 +94,7 @@ df_clean <- df_clean %>%
 
 # write back in local for future use
 write_rds(df_clean, 
-          paste0("~/OneDrive/Magnum Opus/datague/data/gojek/gojek_clean_", gsub("-", "", today()), ".rds"))
+          paste0(output, "/gojek_clean_", gsub("-", "", today()), ".rds"))
 
 # finalize
 df <- df_clean %>%

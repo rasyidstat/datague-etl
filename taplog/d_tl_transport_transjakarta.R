@@ -3,9 +3,13 @@ df_trans_raw <- df %>%
   filter(grepl("Transjakarta", cat2)) %>%
   select(ts:cat3, detail)
 
-trip_id_max <- tryCatch(pq_query("select max(trip_id) from log_tripid"), 
+trip_id_max <- tryCatch(pq_query("select max(trip_id) 
+                                 from log_tripid
+                                 where type = 'Transjakarta'"), 
                         error = function(e) 0) %>%
   as.numeric()
+
+trip_id_max <- ifelse(length(trip_id_max) == 0, 0, trip_id_max)
 
 df_trans_raw <- df_trans_raw %>%
   arrange(ts) %>%

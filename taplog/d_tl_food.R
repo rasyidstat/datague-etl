@@ -19,14 +19,14 @@ df_food_raw <- df_food_raw %>%
            trimws("both"),
          location = stringr::str_extract(detail, "(?<=L(:|;)).*") %>%
            trimws("both"),
-         with = stringr::str_extract(detail, "(?<=W(:|;)).*") %>%
+         companion = stringr::str_extract(detail, "(?<=W(:|;)).*") %>%
            trimws("both") %>%
            # stringr::str_replace_all("\\*", "") %>%
            stringr::str_replace_all("Batik", "Alam, Bella, Cam, Hardi, Jamar, Olivia, Tohir") %>%
            stringr::str_replace_all("Mira,", "Miranti,") %>%
            stringr::str_replace_all("Herry,", "Hery,"),
-         with = ifelse(grepl("Nur ", detail), stringr::str_replace_all(detail, "Luqman", "Luqman A"), 
-                         with),
+         companion = ifelse(grepl("Nur ", detail), stringr::str_replace_all(detail, "Luqman", "Luqman A"), 
+                         companion),
          event = stringr::str_extract(detail, "(?<=E(:|;)).*") %>%
            trimws("both"),
          food = ifelse(cat3 != "" & !(cat3 %in% c("Breakfast", "Dinner")),
@@ -66,7 +66,7 @@ df_food_raw <- df_food_raw %>%
                                           "Nasi Uduk, Telur Pedas, Gorengan",
                                           "Telur Semur, 2 Tahu") ~ "Nasi Uduk dekat kos",
                               cat3 == "Ayam Geprek Bensu" ~ "I am Geprek Bensu, KBA",
-                              grepl("Ketoprak", cat3) ~ "Ketoprak dekat kos",
+                              # grepl("Ketoprak", cat3) ~ "Ketoprak dekat kos",
                               cat3 %in% c("Kwetiau KBA", "Nasi Goreng KBA") ~ "Nasi Goreng dekat KBA",
                               cat3 == "Mi Goreng" ~ "Mi Goreng dekat kos",
                               cat3 %in% c("Nasi, Ayam Bakar", "Nasi, Lele") ~ "Kos Bu Hj. Atun",
@@ -93,19 +93,19 @@ df_food_raw <- df_food_raw %>%
 # trx table ---------------------------------------------------------------
 df_food <- df_food_raw %>%
   select(dt, ts, food_id, type = cat2, 
-         food, location, price = value, with, event,
+         food, location, price = value, companion, event,
          longitude, latitude, accuracy)
 
 
 # food mate table ---------------------------------------------------------
 df_food_mate <- df_food %>%
-  select(dt, ts, food_id, with) %>%
-  mutate(with = stringr::str_replace_all(with, "Family", "Father, Mother, Brother, Sister")) %>%
-  mutate(with = map(strsplit(with, ","), trimws)) %>%
+  select(dt, ts, food_id, companion) %>%
+  mutate(companion = stringr::str_replace_all(companion, "Family", "Father, Mother, Brother, Sister")) %>%
+  mutate(companion = map(strsplit(companion, ","), trimws)) %>%
   unnest() %>%
-  filter(!grepl("F(.*)", with)) %>%
-  mutate(is_partial = ifelse(grepl("\\*", with), TRUE, FALSE),
-         with = stringr::str_replace_all(with, "\\*", ""))
+  filter(!grepl("F(.*)", companion)) %>%
+  mutate(is_partial = ifelse(grepl("\\*", companion), TRUE, FALSE),
+         companion = stringr::str_replace_all(companion, "\\*", ""))
 
 
 # food meal table ---------------------------------------------------------

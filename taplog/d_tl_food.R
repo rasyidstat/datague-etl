@@ -73,8 +73,14 @@ df_food_raw <- df_food_raw %>%
                               cat3 %in% c("Ayam Goreng", "Nasi, Ayam Goreng") ~ "Matahari",
                               location == "Nasi Goreng KBA" ~ "Nasi Goreng dekat KBA",
                               cat3 == "Nasi, Rendang (KBA)" ~ "Nasi Padang dekat KBA",
+                              cat3 == "Nasi, Ayam Goreng (KBA)" ~ "Nasi Padang dekat KBA",
                               location == "Bandara Kuala Lunpur" ~ "Bandara Kuala Lumpur",
                               TRUE ~ location))
+
+# 30 Aug
+df_food_raw <- df_food_raw %>%
+  mutate(companion = gsub("Gery", "Gery (BI)", companion),
+         companion = gsub("Bimo", "Bimo (Product)", companion))
 
 
 # food fixing -------------------------------------------------------------
@@ -95,6 +101,8 @@ df_food <- df_food_raw %>%
   select(dt, ts, food_id, type = cat2, 
          food, location, price = value, companion, event,
          longitude, latitude, accuracy)
+# error
+# df_food <- pq_query("select * from food_transaction")
 
 
 # food mate table ---------------------------------------------------------
@@ -103,7 +111,8 @@ df_food_mate <- df_food %>%
   mutate(companion = stringr::str_replace_all(companion, "Family", "Father, Mother, Brother, Sister")) %>%
   mutate(companion = map(strsplit(companion, ","), trimws)) %>%
   unnest() %>%
-  filter(!grepl("F(.*)", companion)) %>%
+  filter(!grepl("F\\(.*\\)", companion)) %>%
+  mutate(companion = gsub("\\$", "", companion)) %>%
   mutate(is_partial = ifelse(grepl("\\*", companion), TRUE, FALSE),
          companion = stringr::str_replace_all(companion, "\\*", ""))
 

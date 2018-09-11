@@ -13,7 +13,7 @@ df_raw <- data_list %>%
 # clean data --------------------------------------------------------------
 df <- df_raw %>%
   mutate(ts = gsub("\\+07:00", "", timestamp) %>%
-           ymd_hms,
+           ymd_hms(tz = "Asia/Jakarta"),
          dt = as.Date(timestamp)) %>%
   select(ts, dt,
          cat1:cat3,

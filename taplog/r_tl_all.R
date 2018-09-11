@@ -13,10 +13,13 @@ source("d_tl_raw.R")
 
 # sync data ---------------------------------------------------------------
 if ("raw_taplog" %in% pq_table()) {
-  df_taplog <- pq_query("select * from raw_taplog")
-  df <- anti_join(df, 
-                  df_taplog,
-                  by = names(df)[1:(length(names(df))-2)])
+  # df_taplog <- pq_query("select * from raw_taplog")
+  # df <- anti_join(df, 
+  #                 df_taplog,
+  #                 by = names(df)[1:(length(names(df))-2)])
+  max_ts <- pq_query("select max(ts) mx from raw_taplog")$mx
+  df <- df %>%
+    filter(ts > max_ts + 5)
 } else {
   df %>%
     filter(dt == as.Date("1900-10-10")) %>%
@@ -124,6 +127,11 @@ if (nrow(df_krl_trip) >= 1) {
 # insert food -------------------------------------------------------------
 # transform data
 source("d_tl_food.R")
+
+# checker
+df_food_mate %>%
+  count(companion, sort = TRUE) %>%
+  View()
 
 # execute
 if (nrow(df_food) >= 1) {

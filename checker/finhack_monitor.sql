@@ -1,6 +1,6 @@
 with main as (
 select
-	*, row_number() over(partition by cat) rank
+	*, row_number() over(partition by cat order by score desc) rank
 from
 	finhack_lb_hist
 )

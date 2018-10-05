@@ -3,6 +3,8 @@ select
 	*, row_number() over(partition by cat order by score desc) rank
 from
 	finhack_lb_hist
+where
+	ts = (select max(ts) from finhack_lb_hist)
 )
 
 select

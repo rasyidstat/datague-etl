@@ -19,3 +19,4 @@ df <- bind_rows(
 
 # push to postgres (hist table)
 pq_write(df, "finhack_lb_hist")
+

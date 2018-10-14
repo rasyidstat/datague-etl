@@ -37,3 +37,6 @@ rsconnect/
 
 # My data file (.rds)
 *.rds
+
+# Others
+*.json

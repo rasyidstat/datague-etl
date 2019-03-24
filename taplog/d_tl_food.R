@@ -78,10 +78,11 @@ df_food_raw <- df_food_raw %>%
                               TRUE ~ location))
 
 # 30 Aug
-df_food_raw <- df_food_raw %>%
-  mutate(companion = gsub("Gery", "Gery (BI)", companion),
-         companion = gsub("Bimo", "Bimo (Product)", companion))
+# df_food_raw <- df_food_raw %>%
+#   mutate(companion = gsub("Gery", "Gery (BI)", companion),
+#          companion = gsub("Bimo", "Bimo (Product)", companion))
 
+# 29 Jan
 
 # food fixing -------------------------------------------------------------
 df_food_raw <- df_food_raw %>%
@@ -115,6 +116,20 @@ df_food_mate <- df_food %>%
   mutate(companion = gsub("\\$", "", companion)) %>%
   mutate(is_partial = ifelse(grepl("\\*", companion), TRUE, FALSE),
          companion = stringr::str_replace_all(companion, "\\*", ""))
+
+
+# uncomment to check ------------------------------------------------------
+# get food mate reference
+# library(googlesheets)
+# ref_mate <- gs_read(gs_title("dim_friend"))
+# df_food_mate %>%
+#   count(companion) %>%
+#   filter(!companion %in% c("Father", "Mother", "Brother", "Sister"),
+#          !is.na(companion)) %>% 
+#   anti_join(ref_mate %>%
+#               rename(companion = name)) %>%
+#   arrange(desc(n)) %>%
+#   View()
 
 
 # food meal table ---------------------------------------------------------

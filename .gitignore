@@ -42,3 +42,5 @@ rsconnect/
 *.json
 
 d_tl_food_additional.R
+temp.csv
+temp2.csv

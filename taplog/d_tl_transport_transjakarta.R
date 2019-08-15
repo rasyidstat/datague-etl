@@ -2,6 +2,12 @@
 df_trans_raw <- df %>%
   filter(grepl("Transjakarta", cat2)) %>%
   select(ts:cat3, detail)
+# edit data
+# write.csv(df_trans_raw, "temp.csv", row.names = FALSE)
+# df_trans_raw <- read.csv("temp.csv", stringsAsFactors = FALSE) %>%
+#   mutate(ts = as.POSIXct(ts),
+#          dt = as.Date(dt),
+#          detail = "")
 
 trip_id_max <- tryCatch(pq_query("select max(trip_id) 
                                  from log_tripid
@@ -22,7 +28,7 @@ df_trans_raw <- df_trans_raw %>%
          cat3_lag2 = lag(cat3, 2),
          diff = difftime(ts, ts_lag, units = "mins"),
          groupid = case_when(diff >= 180 ~ 1,
-                             diff >= 70 & cat2 == cat2_lag ~ 1,
+                             cat2 == cat2_lag ~ 1,
                              TRUE ~ 0),
          groupid = cumsum(groupid),
          status = case_when(cat2 == "Transjakarta Tap" & cat2_lag == "Transjakarta" ~ "Waiting",

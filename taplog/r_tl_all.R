@@ -18,6 +18,7 @@ if ("raw_taplog" %in% pq_table()) {
   #                 df_taplog,
   #                 by = names(df)[1:(length(names(df))-2)])
   max_ts <- pq_query("select max(ts) mx from raw_taplog")$mx
+  # max_ts <- pq_query("select max(ts) mx from raw_taplog where load_dt = '2019-01-30'")$mx
   df <- df %>%
     filter(ts > max_ts + 5)
 } else {

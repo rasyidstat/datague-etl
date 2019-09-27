@@ -1,16 +1,16 @@
 # read data from google sheet
-gs_auth(gs)
+gs_auth(cache = gs)
 sheets <- gs_ls()
 df <- sheets %>%
   arrange(updated) %>%
-  filter(grepl(sheet_name, sheet_title)) %>%
+  filter(sheet_title == sheet_name) %>%
   select(sheet_title) %>%
   mutate(df = map(sheet_title, gs_title),
          df = map(df, function(x) gs_read(x, col_names=FALSE)),
          df = map(df, function(x) select(x, dt_created=X1, dt_order=X4, content=X5))) %>%
   unnest() %>%
   mutate(dt_created=mdy_hm(dt_created),
-         dt_order=dmy(dt_order)) 
+         dt_order=dmy(dt_order))
   # filter(dt_order >= pq_query("select max(dt) from transport_gojek"))
 
 # function to change id language to end
@@ -93,7 +93,7 @@ df_clean <- df_clean %>%
          discount = ifelse(is.na(discount), 0, discount))
 
 # write back in local for future use
-write_rds(df_clean, 
+write_rds(df_clean,
           paste0(output, "/gojek_clean_", gsub("-", "", today()), ".rds"))
 
 # finalize

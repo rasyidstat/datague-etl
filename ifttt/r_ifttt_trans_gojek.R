@@ -8,7 +8,7 @@ library(mrsq)
 # config ------------------------------------------------------------------
 gs <- "~/OneDrive/Magnum Opus/datague/cred/pa_gs"     # Google Sheets credential location
 output <- "~/OneDrive/Magnum Opus/datague/data/gojek" # Output folder for data backup
-sheet_name <- "GO-JEK Receipt"                        # Name of sheets from the IFTTT
+sheet_name <- "GO-JEK Receipt (1)"                        # Name of sheets from the IFTTT
 # Note: you can try your own data by modifying the config above
 # Create your own IFTTT at https://ifttt.com/applets/282294p-gmail-to-sheets
 
@@ -19,7 +19,7 @@ source("d_ifttt_trans_gojek.R")
 # sync data ---------------------------------------------------------------
 if ("transport_gojek" %in% pq_table()) {
   df_gojek <- pq_query("select * from transport_gojek")
-  df <- anti_join(df, 
+  df <- anti_join(df,
                   df_gojek,
                   by = "order_id")
 } else {
@@ -39,7 +39,7 @@ if (nrow(df) >= 1) {
     mutate(load_ts = load_ts_c,
            load_dt = load_dt_c) %>%
     pq_write("transport_gojek", append = TRUE, overwrite = FALSE)
-  
+
   # log history
   data.frame(load_ts = load_ts_c,
              load_dt = load_dt_c,

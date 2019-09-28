@@ -2,6 +2,8 @@ library(httr)
 library(jsonlite)
 library(glue)
 library(tidyverse)
+library(mrsq)
+library(lubridate)
 
 
 # prepare data ------------------------------------------------------------
@@ -11,9 +13,13 @@ url <- function (dt_start, dt_end) {
 
 auth_code <- "xxx"
 
-df <- GET(url("2015-01-01", "2018-12-31"), add_headers(Authorization = auth_code))
+# df <- GET(url("2015-01-01", "2018-12-31"), add_headers(Authorization = auth_code))
+df <- GET(url("2019-01-01", "2019-08-18"), add_headers(Authorization = auth_code))
 # write_rds(df, "d_oth_trans_grab.rds")
-df <- read_rds("d_oth_trans_grab.rds")
+# write_rds(df, "d_oth_trans_grab_20190818.rds")
+# df <- read_rds("d_oth_trans_grab.rds")
+df <- read_rds("d_oth_trans_grab_20190818.rds")
+
 
 
 # clean data --------------------------------------------------------------
@@ -33,7 +39,7 @@ df_meta3 <- df_meta$driverArrived
 df_meta4 <- df_meta$rewards
 df_meta <- df_meta %>%
   select(flags, fareLowerBounds, fareUpperBounds,
-         instantWin, fakeBooking, 
+         instantWin, fakeBooking,
          estimatedPickupTime, estimatedDropoffTime, surge, surcharge, additionalBookingFee,
          promotionText, rewardId, dropOffTime)
 
@@ -54,7 +60,7 @@ df_all <- bind_cols(
 # sync data ---------------------------------------------------------------
 if ("raw_grab" %in% pq_table()) {
   df_raw <- pq_query("select * from raw_grab")
-  df_all <- anti_join(df_all, 
+  df_all <- anti_join(df_all,
                       df_raw,
                       by = "code")
 }
@@ -69,7 +75,7 @@ if (nrow(df_all) >= 1) {
     mutate(load_ts = load_ts_c,
            load_dt = load_dt_c) %>%
     pq_write("raw_grab", append = TRUE, overwrite = FALSE)
-  
+
   # log history
   data.frame(load_ts = load_ts_c,
              load_dt = load_dt_c,
@@ -99,7 +105,7 @@ df_clean <- df_clean %>%
          arrival_time = as.POSIXct(arrival_time, origin =  "1970-01-01"),
          duration = as.numeric(arrival_time - start_time))
 df_clean <- df_clean %>%
-  select(dt, 
+  select(dt,
          service_type = name2,
          order_id = code,
          from_detail = pick_up_address,
@@ -138,7 +144,7 @@ if (nrow(df_clean) >= 1) {
     mutate(load_ts = load_ts_c,
            load_dt = load_dt_c) %>%
     pq_write("transport_grab", append = TRUE, overwrite = FALSE)
-  
+
   # log history
   data.frame(load_ts = load_ts_c,
              load_dt = load_dt_c,

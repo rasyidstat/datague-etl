@@ -41,6 +41,17 @@ rsconnect/
 # Others
 *.json
 
+# Manual add data
 d_tl_food_additional.R
 temp.csv
 temp2.csv
+missing.csv
+r_oth_trans_missing.R
+
+# Not yet
+d_tl_activity.R
+d_tl_banking.R
+d_tl_spending.R
+d_tl_transport_others.R
+
+

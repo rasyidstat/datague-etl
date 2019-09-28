@@ -1,8 +1,10 @@
 # datague-etl
 
+ETL scripts for my personal analytics project, DataGue using R and PostgreSQL as the data storage
+
 ## Naming conventions
 
-Naming conventions for `datakepo-etl`
+Naming conventions for `datague-etl`
 
 * __First prefix__ - type of script
 	* `r_` __executor__ - run all scripts and write into DB
@@ -18,3 +20,13 @@ Naming conventions for `datakepo-etl`
 	* `_banking` Banking
 	* `_spending` Spending
 	* `_ecommerce` E-commerce
+
+## Data Checklist
+
+My post about personal analytics can be accessed [here](http://rasyidridha.com/blog/personal-analytics/) and [here](http://rasyidridha.com/blog/collect-all-the-data/). My goal is to build the data foundation of my personal analytics system which is simple and automated.
+
+There are limitless data in our life. I will focus primarily to track my financial and transportation data.
+
+
+
+

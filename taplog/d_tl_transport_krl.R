@@ -1,7 +1,7 @@
 # transform data ----------------------------------------------------------
 df_krl_raw <- df %>%
   filter(grepl("KRL", cat2)) %>%
-  select(ts:cat3, detail) 
+  select(ts:cat3, detail)
 # edit data
 # write.csv(df_krl_raw, "temp2.csv", row.names = FALSE)
 # df_krl_raw <- read.csv("temp2.csv", stringsAsFactors = FALSE) %>%
@@ -9,9 +9,9 @@ df_krl_raw <- df %>%
 #          dt = as.Date(dt),
 #          detail = "")
 
-trip_id_max <- tryCatch(pq_query("select max(trip_id) 
-                                 from log_tripid 
-                                 where type = 'KRL'"), 
+trip_id_max <- tryCatch(pq_query("select max(trip_id)
+                                 from log_tripid
+                                 where type = 'KRL'"),
                         error = function(e) 0) %>%
   as.numeric()
 
@@ -38,7 +38,7 @@ df_krl_raw <- df_krl_raw %>%
                             cat2 == "KRL" & cat2_lag == "KRL Tap" & cat3_lag != "KRL Sit" ~ "On Trip",
                             cat2 == "KRL" & cat3_lag == "KRL Sit" ~ "On Trip (Sit)"),
          groupid = case_when(diff >= 180 ~ 1,
-                             diff >= 60 & cat2 == cat2_lag & cat3_lag != "KRL Sit" ~ 1,
+                             diff >= 30 & cat2 == cat2_lag & cat3_lag != "KRL Sit" ~ 1,
                              TRUE ~ 0),
          groupid = cumsum(groupid)) %>%
   ungroup() %>%
@@ -75,14 +75,14 @@ df_krl_trip <- df_krl_raw %>%
   mutate_at(vars(contains("_duration")), funs(as.numeric)) %>%
   mutate(waiting_sit_duration = ifelse(is.infinite(waiting_sit_duration),
                                        NA, waiting_sit_duration))
-  
+
 # finalize
 df_krl_trip <- df_krl_trip %>%
   mutate(load_ts = now(),
          load_dt = today())
-  
+
 df_krl_raw <- df_krl_raw %>%
   mutate(load_ts = now(),
          load_dt = today())
-  
+
 

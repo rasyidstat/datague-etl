@@ -51,19 +51,24 @@ id_to_en <- function(x) {
 clean_gojek <- function(h) {
   output <- list()
   h <- read_html(h)
+  # pickup, destination, driver
   a <- h %>%
     html_nodes("p span") %>%
     html_text()
+  # id and date
   b <- h %>%
     html_nodes("h2") %>%
     html_text() %>%
     trimws()
+  # time
   c <- h %>%
     html_nodes("strong") %>%
     html_text()
+  # duration
   d <- h %>%
     html_nodes("td span") %>%
     html_text()
+  # price and discount
   e <- h %>%
     html_nodes("tr td") %>%
     html_text() %>%
